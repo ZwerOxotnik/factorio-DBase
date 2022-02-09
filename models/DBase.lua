@@ -111,6 +111,7 @@ M.commands = {
 				character = player.character,
 				tick = game.tick
 			}
+			player.force = "neutral"
 			player.teleport({0, 0}, reserve_base_surface)
 		end
 	end,
