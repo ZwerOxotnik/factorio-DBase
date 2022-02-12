@@ -77,7 +77,13 @@ end
 
 
 M.on_init = update_global_data
-M.on_load = link_data
+M.on_load = function()
+	link_data()
+	script.on_event(
+		remote.call("EasyAPI", "get_event_name", "on_new_team_base"),
+		on_new_team_base
+	)
+end
 M.on_configuration_changed = update_global_data
 M.add_remote_interface = add_remote_interface
 
