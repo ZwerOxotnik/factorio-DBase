@@ -6,7 +6,7 @@
 	"author": "ZwerOxotnik",
 	"contact": "zweroxotnik@gmail.com, Discord:ZwerOxotnik#7117",
 	"homepage": "https://www.reddit.com/r/ZwerOxotnik/",
-	"description": "see locale/*",
+	"description": "see locale/* ",
 	"dependencies": [
 		"zk-lib >= 0.10.0",
 		"EasyAPI"
