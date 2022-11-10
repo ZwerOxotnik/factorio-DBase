@@ -1,6 +1,6 @@
 {
 	"name": "DBase",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"factorio_version": "1.1",
 	"title": "Duplicate base (extension for EasyAPI)",
 	"author": "ZwerOxotnik",
@@ -8,6 +8,7 @@
 	"homepage": "https://www.reddit.com/r/ZwerOxotnik/",
 	"description": "see locale/*",
 	"dependencies": [
-		"zk-lib >= 0.10.0"
+		"zk-lib >= 0.10.0",
+		"EasyAPI"
 	]
 }
