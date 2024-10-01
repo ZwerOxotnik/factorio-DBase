@@ -3,13 +3,13 @@ local M = {}
 
 --#region Global data
 ---@type table<string, any>
-local mod_data
+local _mod_data
 --#endregion
 
 
 --#region Events
 
-local function on_new_team_base(event)
+function M.on_new_team_base(event)
 	local surface = event.surface
 	if not (surface and surface.index) then return end
 	local force = event.force
@@ -39,22 +39,36 @@ end
 
 --#region Pre-game stage
 
-local function add_remote_interface()
+function M.add_remote_interface()
 	-- https://lua-api.factorio.com/latest/LuaRemote.html
 	remote.remove_interface("DBase") -- For safety
-	remote.add_interface("DBase", {})
+	remote.add_interface("DBase", {
+		get_data = function()
+			return _mod_data
+		end,
+		---@param type string
+		---@param name string
+		---@param value any
+		change_setting = function(type, name, value)
+			settings[type][name] = {value = value}
+		end,
+		---@return LuaSurface
+		get_surface = function()
+			return game.get_surface("reserve_base_surface") -- TODO: umprove
+		end,
+	})
 end
 
-local function link_data()
-	mod_data = global.DB
+function M.link_data()
+	_mod_data = global.DB
 end
 
-local function update_global_data()
+function M.update_global_data()
 	global.DB = global.DB or {}
-	mod_data = global.DB
-	mod_data.players_prev_pos = mod_data.players_prev_pos or {}
+	_mod_data = global.DB
+	_mod_data.players_prev_pos = _mod_data.players_prev_pos or {}
 
-	link_data()
+	M.link_data()
 
 	local reserve_base_surface = game.get_surface("reserve_base_surface")
 	if reserve_base_surface == nil then
@@ -71,21 +85,20 @@ local function update_global_data()
 
 	script.on_event(
 		remote.call("EasyAPI", "get_event_name", "on_new_team_base"),
-		on_new_team_base
+		M.on_new_team_base
 	)
 end
 
 
-M.on_init = update_global_data
+M.on_init = M.update_global_data
 M.on_load = function()
-	link_data()
+	M.link_data()
 	script.on_event(
 		remote.call("EasyAPI", "get_event_name", "on_new_team_base"),
-		on_new_team_base
+		M.on_new_team_base
 	)
 end
-M.on_configuration_changed = update_global_data
-M.add_remote_interface = add_remote_interface
+M.on_configuration_changed = M.update_global_data
 
 --#endregion
 
@@ -98,7 +111,7 @@ M.commands = {
 		--TODO: detach the player from character
 		local reserve_base_surface = game.get_surface("reserve_base_surface")
 		if player.surface == reserve_base_surface then
-			local player_data = mod_data.players_prev_pos[player_index]
+			local player_data = _mod_data.players_prev_pos[player_index]
 			if player_data == nil or not (player_data.surface and player_data.surface.valid) then
 				--TODO: change message
 				player.print({"error.error-message-box-title"})
@@ -108,9 +121,9 @@ M.commands = {
 			if player_data.force and player_data.force.valid then
 				player.force = player_data.force
 			end
-			mod_data.players_prev_pos[player_index] = nil
+			_mod_data.players_prev_pos[player_index] = nil
 		else
-			mod_data.players_prev_pos[player_index] = {
+			_mod_data.players_prev_pos[player_index] = {
 				surface = player.surface,
 				position = player.position,
 				force = player.force,
