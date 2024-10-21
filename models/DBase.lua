@@ -60,12 +60,12 @@ function M.add_remote_interface()
 end
 
 function M.link_data()
-	_mod_data = global.DB
+	_mod_data = storage.DB
 end
 
 function M.update_global_data()
-	global.DB = global.DB or {}
-	_mod_data = global.DB
+	storage.DB = storage.DB or {}
+	_mod_data = storage.DB
 	_mod_data.players_prev_pos = _mod_data.players_prev_pos or {}
 
 	M.link_data()
